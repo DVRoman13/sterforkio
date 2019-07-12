@@ -13,43 +13,40 @@ const nunjucks = require('gulp-nunjucks-render');           //template engine
 const imagemin = require('gulp-imagemin');
 
 const fontsFiles = [										//составляем массив переменних с все файлов шрифтов, для переноса в папку разработки
-	'./src/fonts/**.eot',
-	'./src/fonts/**.ttf',
-	'./src/fonts/**.woff',
-	'./src/fonts/**.otf'
+	'src/fonts/**.eot',
+	'src/fonts/**.ttf',
+	'src/fonts/**.woff',
+	'src/fonts/**.otf'
 ];
 
 const imgFiles = [
-    './src/img/**/**.jpg',
-    './src/img/**/**.png'
+    'src/img/**/**.jpg',
+    'src/img/**/**.png'
 ];
 
 function cleandev() {										//модуль отчистки папки перед каждой расспаковкой
-    return gulp.src('./dist', {read: false})
+    return gulp.src('dist', {read: false})
         .pipe(clean())
 }
 
 function img() {											//модуль переноса картинок
     return gulp.src(imgFiles)
     .pipe(imagemin())
-        .pipe(gulp.dest('./dist/img'))
+        .pipe(gulp.dest('dist/img'))
 }
 
 function fonts () {											//Copy fonts to dir "dev"
     return gulp.src(fontsFiles)
-        .pipe(gulp.dest('./dist/fonts'))
+        .pipe(gulp.dest('dist/fonts'))
 }
 
 function js () {											//Copy fonts to dir "dev"
-    return gulp.src('./src/js/*.js')
-        .pipe(gulp.dest('./dist/js'))
+    return gulp.src('src/js/*.js')
+        .pipe(gulp.dest('dist/js'))
 }
 
 function scripts () {
-    return gulp.src('src/sections/**/*.js')
-		.pipe(babel({											//babel
-            presets: ['@babel/env']
-        }))
+    return gulp.src('src/js/*.js')
         .pipe(terser({											//terser
 			toplevel: true
 		}))														//minify js
@@ -57,22 +54,22 @@ function scripts () {
 		.pipe(rename(function (path) {							// function of rename extname for .css
             path.extname = ".min.js";
         }))
-        .pipe(gulp.dest('./dist/js'))
+        .pipe(gulp.dest('dist/js'))
 		.pipe(browserSync.stream());
 }
 
 function forSass() {
-    return gulp.src('./src/scss/*.scss')
+    return gulp.src('src/scss/*.scss')
         .pipe(sass())
         .pipe(cleanCSS({level: 2}))								// minifyCSS
-        .pipe(autoprefixer({
-            browsers: ['> 0.1%'],								// для браузеров которые использует 0.1%
-			cascade: false
-        }))
+      //   .pipe(autoprefixer({
+      //       browsers: ['> 0.1%'],								// для браузеров которые использует 0.1%
+			// cascade: false
+      //   }))
         .pipe(rename(function (path) {							// function of rename extname for .css
             path.extname = ".min.css";
         }))
-        .pipe(gulp.dest('./dist/css'))
+        .pipe(gulp.dest('dist/css'))
 		.pipe(browserSync.stream());
 }
 
@@ -83,8 +80,9 @@ function watch() {
 		}
 	});
 
-	gulp.watch('./src/**/*.scss', forSass);				// ставим watcher для слежения за изменениями в файлах
-	gulp.watch('./src/**/*.js', scripts);
+	gulp.watch('src/**/*.scss', forSass);				// ставим watcher для слежения за изменениями в файлах
+  gulp.watch('src/**/*.js', scripts);
+
 }
 
 gulp.task('cleandev', cleandev);
